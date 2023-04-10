@@ -7,8 +7,8 @@ def get_dataset(path, img_size):
         transforms.Resize(img_size),
         transforms.CenterCrop(img_size),
         transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406),#COCO Mean
-                            (0.229, 0.224, 0.225)) #COCO STD                  
+        # transforms.Normalize((0.485, 0.456, 0.406),#COCO Mean
+        #                     (0.229, 0.224, 0.225)) #COCO STD                  
     ])
     return datasets.ImageFolder(path, transform)
 
