@@ -1,10 +1,9 @@
 # Program to load images and their corresponding segmentation masks
 import os
 from PIL import Image
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.transforms import InterpolationMode
-import matplotlib.pyplot as plt
 
 # Helper class to load image data from file
 class ImageDataset(Dataset):
@@ -52,18 +51,23 @@ class ImageDataset(Dataset):
         image, mask = self.img_transform(image), self.mask_transform(mask)
         return image, mask
 
-image_root = 'data/train'
-mask_root = 'data/annotations/stuff_train2017_pixelmaps'
+def get_loader(image_root, mask_root, batch_size, shuffle=True):
+    dataset = ImageDataset(image_root, mask_root)
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=2)
 
-# Create dataset
-dataset = ImageDataset(image_root, mask_root)
+if __name__ == '__main__':
 
-# Get first image and mask
-image, mask = dataset[0]
+    image_root = 'data/train'
+    mask_root = 'data/annotations/stuff_train2017_pixelmaps'
 
-# Plot image and mask
-import matplotlib.pyplot as plt
-plt.imshow(image.permute(1, 2, 0))
-plt.show()
-plt.imshow(mask.permute(1, 2, 0))
-plt.show()
+    # Create dataset
+    dataset = ImageDataset(image_root, mask_root)
+
+    # Create dataloader
+    dataloader = get_loader(image_root, mask_root, batch_size=4)
+
+    # Test dataloader
+    for image, mask in dataloader:
+        print(image.shape)
+        print(mask.shape)
+        break
