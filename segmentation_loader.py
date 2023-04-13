@@ -12,16 +12,14 @@ class ImageDataset(Dataset):
         Dataset to load image and mask pairs
         :param image_root: Root directory containing images
         :param mask_root: Root directory containing masks
-        :param transform: Transform to apply to image and mask
-        :param class_encoding: One-hot encoding for each class
         """
         self.img_transform = transforms.Compose([
-            transforms.Resize(256, interpolation=InterpolationMode.NEAREST_EXACT),
+            transforms.Resize(256, interpolation=InterpolationMode.NEAREST),
             transforms.CenterCrop(256),
             transforms.ToTensor(),
         ])
         self.mask_transform = transforms.Compose([
-            transforms.Resize(256, interpolation=InterpolationMode.NEAREST_EXACT),
+            transforms.Resize(256, interpolation=InterpolationMode.NEAREST),
             transforms.CenterCrop(256),
             transforms.PILToTensor(),
         ])
@@ -46,6 +44,9 @@ class ImageDataset(Dataset):
         """
         # Load image and mask
         image = Image.open(self.image_pairs[idx][0])
+        # Convert to RGB if necessary
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
         mask = Image.open(self.image_pairs[idx][1])
         # Apply transform
         image, mask = self.img_transform(image), self.mask_transform(mask)

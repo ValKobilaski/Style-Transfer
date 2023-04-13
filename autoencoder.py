@@ -7,7 +7,7 @@ LossOutput = namedtuple(
     "LossOutput", ["relu1", "relu2", "relu3", "relu4", "relu5"])
 
 class AutoEncoder(nn.Module):
-    def __init__(self, layer_sizes: list, channel_sizes: list, input_size = 256):
+    def __init__(self, layer_sizes: list, channel_sizes: list, input_size = 256, output_channels = 182):
         """
         :param layer_sizes: The sizes of the layers in the autoencoder
         :param channel_sizes: The number of channels in each layer
@@ -75,7 +75,7 @@ class AutoEncoder(nn.Module):
         if stride > 1:
             moduleList.append(nn.Upsample(scale_factor=stride))
         # Add the final convolutional layer
-        moduleList.append(nn.Conv2d(cur_channel_size, 3, kernel_size=3, stride=1, padding="same"))
+        moduleList.append(nn.Conv2d(cur_channel_size, output_channels, kernel_size=3, stride=1, padding="same"))
 
         # Construct the decoder
         self.decoder = nn.Sequential(*moduleList)
