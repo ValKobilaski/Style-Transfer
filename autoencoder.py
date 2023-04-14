@@ -39,7 +39,7 @@ class AutoEncoder(nn.Module):
             cur_channel_size = channel_sizes[idx]
 
         # Final convolutional layer
-        moduleList.append(nn.Conv2d(cur_channel_size, channel_sizes[-1], kernel_size=3, stride=1, padding="same"))
+        moduleList.append(nn.Conv2d(cur_channel_size, channel_sizes[len(layer_sizes)-1], kernel_size=3, stride=1, padding="same"))
         # Flatten the output
         moduleList.append(nn.Flatten())
 
@@ -50,7 +50,7 @@ class AutoEncoder(nn.Module):
         moduleList = []
         # Decoder layers
         # Reshape the output
-        moduleList.append(Reshape((-1, channel_sizes[-1], cur_image_size, cur_image_size)))
+        moduleList.append(Reshape((-1, channel_sizes[len(layer_sizes)-1], cur_image_size, cur_image_size)))
 
         for idx, layer_size in enumerate(layer_sizes[::-1]):
             # Check if the layer size is a multiple of the current image size
@@ -63,12 +63,12 @@ class AutoEncoder(nn.Module):
             if stride > 1:
                 moduleList.append(nn.Upsample(scale_factor=stride))
             # Add the convolutional layer
-            moduleList.append(nn.Conv2d(cur_channel_size, channel_sizes[-idx-1], kernel_size=3, stride=1, padding="same"))
+            moduleList.append(nn.Conv2d(cur_channel_size, channel_sizes[len(layer_sizes)+idx-1], kernel_size=3, stride=1, padding="same"))
             # Add the ReLU activation
             moduleList.append(nn.ReLU())
             # Update the current image size and channel size
             cur_image_size = layer_size
-            cur_channel_size = channel_sizes[-idx-1]
+            cur_channel_size = channel_sizes[len(layer_sizes)+idx-1]
         # Find the stride required to increase the image size to the input size
         stride = input_size // cur_image_size
         # Upsample the image only if stride length is greater than 1
