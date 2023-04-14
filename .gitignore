@@ -1,6 +1,6 @@
 data/
 _pycache_/
-# models/
+models/
 __pycache__/
 .DS_Store
 myenv/
